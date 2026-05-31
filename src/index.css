@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Custom Utilities for High Definition Student Attraction style */
+@layer utilities {
+  .glow-border-red {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.15);
+  }
+  .glow-border-blue {
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+  }
+  .glow-border-emerald {
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+  }
+  .glow-border-cyan {
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+  }
+  .glow-border-purple {
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
+  }
+  .glow-border-pink {
+    box-shadow: 0 0 15px rgba(236, 72, 153, 0.15);
+  }
+  .glow-text {
+    text-shadow: 0 0 8px currentColor;
+  }
+}
+
+/* Scrollbar customization for Elegant Light feel */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Markdown prose rendering styles for neat text in Modern SaaS Light */
+.markdown-body {
+  color: #334155;
+  line-height: 1.7;
+  font-family: "Inter", sans-serif;
+}
+
+.markdown-body h1 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  padding-bottom: 0.375rem;
+}
+
+.markdown-body h2 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-body h3 {
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #334155;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.markdown-body p {
+  margin-bottom: 0.875rem;
+  color: #475569;
+}
+
+.markdown-body strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.markdown-body ul, .markdown-body ol {
+  margin-bottom: 1rem;
+  padding-left: 1.25rem;
+}
+
+.markdown-body ul {
+  list-style-type: disc;
+}
+
+.markdown-body ol {
+  list-style-type: decimal;
+}
+
+.markdown-body li {
+  margin-bottom: 0.375rem;
+  color: #475569;
+}
+
+.markdown-body code {
+  font-family: "JetBrains Mono", monospace;
+  background-color: rgba(99, 102, 241, 0.08);
+  color: #4f46e5;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.markdown-body pre {
+  font-family: "JetBrains Mono", monospace;
+  background-color: #0f172a;
+  color: #f1f5f9;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  border: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+}
+
+.markdown-body pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+}
+
+.markdown-body blockquote {
+  border-left: 4px solid #6366f1;
+  padding-left: 1rem;
+  color: #64748b;
+  font-style: italic;
+  margin: 1rem 0;
+}
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+}
+
+.markdown-body th, .markdown-body td {
+  border: 1px solid rgba(0,0,0,0.06);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.markdown-body th {
+  background-color: rgba(99,102,241,0.05);
+  color: #0f172a;
+}
+
+.markdown-body tr:nth-child(even) {
+  background-color: rgba(0,0,0,0.02);
+}

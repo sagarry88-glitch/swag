@@ -1,0 +1,6 @@
+{
+  "name": "Exam Preparation App",
+  "description": "A high-fidelity dark-themed exam preparation app offering 24/7 AI homework doubt solving, personalized curriculum study guides, subject selection, and student progress tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
