@@ -30,6 +30,84 @@ const getGeminiClient = () => {
   });
 };
 
+// Helper function to delay execution (exponential backoff)
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Attempts to call the Gemini API for a specific model with automatic exponential backoff.
+ * Retries up to maxRetries times (total of maxRetries + 1 attempts) if a 503 Service Unavailable,
+ * high demand, or rate-limited status is detected.
+ */
+async function tryGenerateWithRetry(
+  ai: any,
+  model: string,
+  params: any,
+  maxRetries = 3,
+  initialDelayMs = 1500
+): Promise<any> {
+  let attempt = 0;
+  while (true) {
+    try {
+      console.log(`[Gemini Request] Using model: ${model} (Attempt ${attempt + 1}/${maxRetries + 1})`);
+      const response = await ai.models.generateContent({
+        ...params,
+        model: model,
+      });
+      return response;
+    } catch (error: any) {
+      attempt++;
+      const errorMsg = String(error.message || "").toUpperCase();
+      const status = error.status || (error.response && error.response.status) || 0;
+      
+      const isTemporaryError = 
+        status === 503 || 
+        status === 429 ||
+        errorMsg.includes("503") ||
+        errorMsg.includes("UNAVAILABLE") ||
+        errorMsg.includes("TEMPORARY") ||
+        errorMsg.includes("HIGH DEMAND") ||
+        errorMsg.includes("OVERLOAD") ||
+        errorMsg.includes("SPIKES IN DEMAND") ||
+        errorMsg.includes("BUSY") ||
+        errorMsg.includes("RESOURCEEXHAUSTED");
+
+      if (isTemporaryError && attempt <= maxRetries) {
+        const backoffTime = initialDelayMs * Math.pow(2, attempt - 1);
+        console.warn(`[Gemini Retry] Model ${model} is experiencing temporary high demand/overload. Retrying in ${backoffTime}ms... Error: ${error.message}`);
+        await delay(backoffTime);
+      } else {
+        // If it's not a temporary error OR we have run out of retries, bubble the error up
+        throw error;
+      }
+    }
+  }
+}
+
+/**
+ * Wrapper for generateContent that falls back to alternative models if the primary model fails.
+ */
+async function generateContentWithFallback(
+  ai: any,
+  params: any
+): Promise<any> {
+  // Try gemini-3.5-flash first, then fall back to gemini-3.1-flash-lite, then gemini-3.1-pro-preview
+  const models = ["gemini-3.5-flash", "gemini-3.1-flash-lite", "gemini-3.1-pro-preview"];
+  let lastError: any = null;
+
+  for (const model of models) {
+    try {
+      const response = await tryGenerateWithRetry(ai, model, params);
+      return response;
+    } catch (error: any) {
+      console.error(`[Gemini Fallback] Model ${model} failed or is completely unavailable. Trying next fallback model if available... Error: ${error.message || error}`);
+      lastError = error;
+    }
+  }
+
+  // All models failed in the chain
+  throw lastError || new Error("All Gemini models in the fallback chain failed.");
+}
+
 // 24/7 AI Doubt Solving API
 app.post("/api/doubt-solve", async (req, res): Promise<any> => {
   try {
@@ -72,8 +150,7 @@ Apply these formatting guidelines rigorously:
       text: text || "Please solve and explain the question shown in the attached image step-by-step."
     });
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
+    const response = await generateContentWithFallback(ai, {
       contents: { parts: contents },
       config: {
         systemInstruction: systemPrompt,
@@ -136,8 +213,7 @@ Provide 5 text-based Q&A flashcards for active recall revision. Format them stri
 **Q1: [Question]?**
 **A1:** [Answer]`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
+    const response = await generateContentWithFallback(ai, {
       contents: prompt,
       config: {
         temperature: 0.75,
@@ -182,8 +258,7 @@ Provide a detailed diagnostic review in structured markdown:
 - **Targeted Action Plan**: Give 3 highly practical tips to improve their performance before the next practice score.
 - **Curated Revision Tip**: Provide a specialized memory technique (like Feynman, Active Recall, or Spaced Repetition) tailored to ${subject}.`;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
+    const response = await generateContentWithFallback(ai, {
       contents: prompt,
       config: {
         temperature: 0.7,
